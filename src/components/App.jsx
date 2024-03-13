@@ -17,7 +17,7 @@ const App = () => {
     return initFeedback;
   });
 
-  const totalFeedbacks = feedback.good + feedback.neutral + feedback.bad;
+  const totalFeedbacks = Object.values(feedback).reduce((acc, x) => acc + x, 0);
   const positiveRate = Math.round(
     ((totalFeedbacks - feedback.bad) / totalFeedbacks) * 100
   );
