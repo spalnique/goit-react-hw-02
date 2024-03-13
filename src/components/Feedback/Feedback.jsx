@@ -1,17 +1,27 @@
 import Counter from '../Counter/Counter';
 
-const Feedback = ({ data }) => {
+const Feedback = ({ feedbackData, totalFeedbacks, positiveRate }) => {
   return (
     <>
       <ul>
-        {Object.keys(data.notes).map((x) => {
-          return <Counter key={x} propName={x} propValue={data.notes[x]} />;
+        {Object.keys(feedbackData).map((feedbackType) => {
+          return (
+            <li key={feedbackType}>
+              <Counter
+                feedbackType={feedbackType}
+                value={feedbackData[feedbackType]}
+              />
+            </li>
+          );
         })}
       </ul>
       <ul>
-        {Object.keys(data.stats).map((x) => {
-          return <Counter key={x} propName={x} propValue={data.stats[x]} />;
-        })}
+        <li key={'total'}>
+          <Counter feedbackType={'total'} value={totalFeedbacks} />
+        </li>
+        <li key={'positive'}>
+          <Counter feedbackType={'positive'} value={positiveRate + '%'} />
+        </li>
       </ul>
     </>
   );

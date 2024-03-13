@@ -1,21 +1,24 @@
 import Button from '../Button/Button';
 
-const Options = ({ data, onUpdate }) => {
+const Options = ({ feedbackData, totalFeedbacks, onUpdate, onReset }) => {
   return (
-    <ul>
-      {Object.keys(data).map((x) => {
-        return (
-          <li key={x}>
-            <Button
-              buttonName={x}
-              onClick={() => {
-                onUpdate(data, x);
-              }}
-            />
-          </li>
-        );
-      })}
-    </ul>
+    <>
+      <ul>
+        {Object.keys(feedbackData).map((feedbackType) => {
+          return (
+            <li key={feedbackType}>
+              <Button
+                buttonName={feedbackType}
+                onClick={() => {
+                  onUpdate(feedbackData, feedbackType);
+                }}
+              />
+            </li>
+          );
+        })}
+      </ul>
+      {totalFeedbacks > 0 && <Button buttonName={'reset'} onClick={onReset} />}
+    </>
   );
 };
 

@@ -4,13 +4,11 @@ import Description from './Description/Description';
 import Notification from './Notification/Notification';
 import { useEffect, useState } from 'react';
 
-// const total = Object.values(initFeedback).reduce((acc, x) => acc + x, 0);
-// const rate = ((total - initFeedback.notes.bad) / total) * 100;
-
 const App = () => {
   const resetFeedback = {
-    notes: { good: 0, neutral: 0, bad: 0 },
-    stats: { total: 0, rate: 0 },
+    good: 0,
+    neutral: 0,
+    bad: 0,
   };
 
   const [feedback, setFeedback] = useState(() => {
@@ -19,24 +17,21 @@ const App = () => {
     return initFeedback;
   });
 
+  const totalFeedbacks = feedback.good + feedback.neutral + feedback.bad;
+  const positiveRate = Math.round(
+    ((totalFeedbacks - feedback.bad) / totalFeedbacks) * 100
+  );
+
   const handleReset = () => {
     setFeedback(resetFeedback);
   };
 
-  const handleUpdate = (data, property) => {
-    const updatedNotes = { ...data, [property]: data[property] + 1 };
-    const updatedTotal = Object.values(updatedNotes).reduce(
-      (acc, x) => acc + x,
-      0
-    );
-    const updatedRate =
-      Math.round(((updatedTotal - updatedNotes['bad']) / updatedTotal) * 100) +
-      '%';
-    const updatedStats = {
-      total: updatedTotal,
-      rate: updatedRate,
+  const handleUpdate = (feedbackData, feedbackType) => {
+    const updatedFeedback = {
+      ...feedbackData,
+      [feedbackType]: feedbackData[feedbackType] + 1,
     };
-    setFeedback({ notes: updatedNotes, stats: updatedStats });
+    setFeedback(updatedFeedback);
   };
 
   useEffect(() => {
@@ -46,12 +41,18 @@ const App = () => {
   return (
     <>
       <Description />
-      <Options data={feedback.notes} onUpdate={handleUpdate} />
-      {feedback.stats.total > 0 ? (
-        <>
-          <Feedback data={feedback} />
-          <button onClick={handleReset}>reset</button>
-        </>
+      <Options
+        feedbackData={feedback}
+        onUpdate={handleUpdate}
+        onReset={handleReset}
+        totalFeedbacks={totalFeedbacks}
+      />
+      {totalFeedbacks > 0 ? (
+        <Feedback
+          feedbackData={feedback}
+          totalFeedbacks={totalFeedbacks}
+          positiveRate={positiveRate}
+        />
       ) : (
         <Notification />
       )}

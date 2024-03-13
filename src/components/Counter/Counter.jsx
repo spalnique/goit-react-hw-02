@@ -1,7 +1,7 @@
-const Counter = ({ propName, propValue }) => {
+const Counter = ({ feedbackType, value }) => {
   return (
     <p>
-      {propName}: {propValue}
+      {feedbackType}: {value}
     </p>
   );
 };
