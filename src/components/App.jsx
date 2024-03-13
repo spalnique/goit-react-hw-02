@@ -4,62 +4,53 @@ import Description from './Description/Description';
 import Notification from './Notification/Notification';
 import { useEffect, useState } from 'react';
 
+// const total = Object.values(initFeedback).reduce((acc, x) => acc + x, 0);
+// const rate = ((total - initFeedback.notes.bad) / total) * 100;
+
 const App = () => {
-  const [notes, setNotes] = useState(() => {
-    const onLoadNotes = localStorage.getItem('notes');
-    if (!onLoadNotes)
-      localStorage.setItem(
-        'notes',
-        JSON.stringify({ good: 0, neutral: 0, bad: 0 })
-      );
-    return JSON.parse(localStorage.getItem('notes'));
+  const resetFeedback = {
+    notes: { good: 0, neutral: 0, bad: 0 },
+    stats: { total: 0, rate: 0 },
+  };
+
+  const [feedback, setFeedback] = useState(() => {
+    const initFeedback = JSON.parse(localStorage.getItem('feedback'));
+    if (!initFeedback) return resetFeedback;
+    return initFeedback;
   });
 
-  const [stats, setStats] = useState(() => {
-    const onLoadStats = localStorage.getItem('stats');
-    if (!onLoadStats)
-      localStorage.setItem(
-        'stats',
-        JSON.stringify({ total: 0, positiveRate: '0%' })
-      );
-    return JSON.parse(localStorage.getItem('stats'));
-  });
+  const handleReset = () => {
+    setFeedback(resetFeedback);
+  };
+
+  const handleUpdate = (data, property) => {
+    const updatedNotes = { ...data, [property]: data[property] + 1 };
+    const updatedTotal = Object.values(updatedNotes).reduce(
+      (acc, x) => acc + x,
+      0
+    );
+    const updatedRate =
+      Math.round(((updatedTotal - updatedNotes['bad']) / updatedTotal) * 100) +
+      '%';
+    const updatedStats = {
+      total: updatedTotal,
+      rate: updatedRate,
+    };
+    setFeedback({ notes: updatedNotes, stats: updatedStats });
+  };
 
   useEffect(() => {
-    localStorage.setItem('notes', JSON.stringify(notes));
-
-    const totalFeedback = Object.values(notes).reduce((acc, x) => acc + x, 0);
-    const positiveFeedbackRate = totalFeedback
-      ? Math.round(((totalFeedback - notes['bad']) / totalFeedback) * 100) + '%'
-      : '0%';
-
-    setStats({
-      total: totalFeedback,
-      positiveRate: positiveFeedbackRate,
-    });
-    localStorage.setItem(
-      'stats',
-      JSON.stringify({
-        total: totalFeedback,
-        positiveRate: positiveFeedbackRate,
-      })
-    );
-  }, [notes]);
+    localStorage.setItem('feedback', JSON.stringify(feedback));
+  }, [feedback]);
 
   return (
     <>
       <Description />
-      <Options data={notes} onUpdate={setNotes} />
-      {stats.total > 0 ? (
+      <Options data={feedback.notes} onUpdate={handleUpdate} />
+      {feedback.stats.total > 0 ? (
         <>
-          <Feedback data={notes} stats={stats} />
-          <button
-            onClick={() => {
-              setNotes({ good: 0, neutral: 0, bad: 0 });
-              setStats({ total: 0, positiveRate: '0%' });
-            }}>
-            reset
-          </button>
+          <Feedback data={feedback} />
+          <button onClick={handleReset}>reset</button>
         </>
       ) : (
         <Notification />

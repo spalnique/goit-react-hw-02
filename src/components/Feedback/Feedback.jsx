@@ -1,16 +1,16 @@
 import Counter from '../Counter/Counter';
 
-const Feedback = ({ data, stats }) => {
+const Feedback = ({ data }) => {
   return (
     <>
       <ul>
-        {Object.keys(data).map((x) => {
-          return <Counter key={x} propName={x} propValue={data[x]} />;
+        {Object.keys(data.notes).map((x) => {
+          return <Counter key={x} propName={x} propValue={data.notes[x]} />;
         })}
       </ul>
       <ul>
-        {Object.keys(stats).map((x) => {
-          return <Counter key={x} propName={x} propValue={stats[x]} />;
+        {Object.keys(data.stats).map((x) => {
+          return <Counter key={x} propName={x} propValue={data.stats[x]} />;
         })}
       </ul>
     </>

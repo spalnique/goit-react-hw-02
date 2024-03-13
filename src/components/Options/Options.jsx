@@ -9,7 +9,7 @@ const Options = ({ data, onUpdate }) => {
             <Button
               buttonName={x}
               onClick={() => {
-                onUpdate({ ...data, [x]: data[x] + 1 });
+                onUpdate(data, x);
               }}
             />
           </li>
